@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/sevices/prisma/prisma.service';
+import { isNotEmpty } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
@@ -46,7 +47,7 @@ export class ProductsService {
       const existingProduct = await this.prisma.product.findUnique({
         where: { id },
       });
-      console.log('Existing Product:', existingProduct);
+      console.log('Existing Product:', !existingProduct);
       if (!existingProduct) {
         console.log(`Product id ${id} not found.`);
         return { message: `Product id ${id} not found.`, product: {}, statusCode: 404 };
@@ -61,13 +62,16 @@ export class ProductsService {
 
   async update(id: number, updateProductDto: UpdateProductDto) {
     try {
+      console.log('Finding product with id:', id);
       const existingProduct = await this.prisma.product.findUnique({
         where: { id },
       });
       console.log('Existing Product:', !existingProduct);
       if (!existingProduct) {
-        return { message: `Product id ${id} not found, product not updated.`, product: updateProductDto, statusCode: 404 };
+        console.log(`Product id ${id} not found, product not updated.`);
+        return { message: `Product id ${id} not found, product not updated.`, product: {}, statusCode: 404 };
       }
+      console.log('Updating product with data:', updateProductDto);
       const updatedProduct = await this.prisma.product.update({
         where: { id },
         data: updateProductDto,

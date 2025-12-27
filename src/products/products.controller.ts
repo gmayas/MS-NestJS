@@ -28,8 +28,8 @@ export class ProductsController {
 
   // Handle message pattern for updating a product
   @MessagePattern({ cmd: 'update_product' })
-  update(@Payload() data: { id: number; updateProductDto: UpdateProductDto }) {
-    return this.productsService.update(data.id, data.updateProductDto);
+  update(@Payload() updateProductDto: UpdateProductDto) {
+    return this.productsService.update(updateProductDto.id, updateProductDto);
   }
 
   // Handle message pattern for deleting a product
